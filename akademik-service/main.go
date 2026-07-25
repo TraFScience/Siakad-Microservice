@@ -8,8 +8,8 @@ import (
     "net/http"
     "time"
 
-    "Minggu-ke2/internal/config"
-    "Minggu-ke2/internal/siakad"
+"akademik-service/internal/config"
+"akademik-service/internal/siakad"
 
     "github.com/gin-contrib/cors"
     "github.com/gin-gonic/gin"

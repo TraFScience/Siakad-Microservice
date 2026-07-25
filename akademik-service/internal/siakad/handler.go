@@ -5,7 +5,7 @@ import (
     "net/http"
     "strconv"
 
-    "Minggu-ke2/internal/response"
+    "akademik-service/internal/response"
 
     "github.com/gin-gonic/gin"
 )

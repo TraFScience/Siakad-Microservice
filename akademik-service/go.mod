@@ -1,4 +1,4 @@
-module Minggu-ke2
+module akademik-service
 
 go 1.26.5
 
