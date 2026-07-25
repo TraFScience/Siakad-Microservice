@@ -25,8 +25,9 @@ func (h *Handler) Register(r *gin.RouterGroup) {
     r.PUT("/mahasiswa/:nim", h.UpdateMahasiswa)
     r.DELETE("/mahasiswa/:nim", h.HapusMahasiswa)
     r.POST("/mahasiswa/:nim/nilai", h.InputNilai)
-    r.GET("/mahasiswa/:nim/transkrip", h.Transkrip)
-    r.GET("/rekap/jurusan", h.PerJurusan)
+	r.GET("/mahasiswa/:nim/transkrip", h.Transkrip)
+	r.GET("/mahasiswa/:nim/ringkasan", h.Ringkasan)
+	r.GET("/rekap/jurusan", h.PerJurusan)
     r.GET("/rekap/top-ipk", h.TopIPK)
 }
 
@@ -136,6 +137,16 @@ func (h *Handler) TopIPK(c *gin.Context) {
     data, err := h.svc.TopIPK(c.Request.Context(), n)
     if err != nil {
         response.Error(c, http.StatusInternalServerError, err)
+        return
+    }
+    response.Success(c, http.StatusOK, data)
+}
+
+func (h *Handler) Ringkasan(c *gin.Context) {
+    nim := c.Param("nim")
+    data, err := h.svc.Ringkasan(c.Request.Context(), nim)
+    if err != nil {
+        handleError(c, err)
         return
     }
     response.Success(c, http.StatusOK, data)

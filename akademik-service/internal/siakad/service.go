@@ -15,9 +15,10 @@ type Service interface {
     UpdateMahasiswa(ctx context.Context, nim string, input InputMahasiswaDTO) error
     HapusMahasiswa(ctx context.Context, nim string) error
     InputNilai(ctx context.Context, nim string, input InputNilaiDTO) error
-    Transkrip(ctx context.Context, nim string) (TranskripDTO, error)
-    PerJurusan(ctx context.Context) (map[string][]Mahasiswa, error)
-    TopIPK(ctx context.Context, n int) ([]MahasiswaDetailDTO, error)
+	Transkrip(ctx context.Context, nim string) (TranskripDTO, error)
+	PerJurusan(ctx context.Context) (map[string][]Mahasiswa, error)
+	TopIPK(ctx context.Context, n int) ([]MahasiswaDetailDTO, error)
+	Ringkasan(ctx context.Context, nim string) (RingkasanDTO, error)
 }
 
 type siakadService struct {
@@ -240,8 +241,31 @@ func (s *siakadService) TopIPK(ctx context.Context, n int) ([]MahasiswaDetailDTO
         return result[i].IPK > result[j].IPK
     })
 
-    if n > len(result) {
-        n = len(result)
-    }
-    return result[:n], nil
+	if n > len(result) {
+		n = len(result)
+	}
+	return result[:n], nil
+}
+
+func (s *siakadService) Ringkasan(ctx context.Context, nim string) (RingkasanDTO, error) {
+	m, err := s.mhsRepo.Cari(ctx, nim)
+	if err != nil {
+		return RingkasanDTO{}, err
+	}
+
+	daftar, _ := s.nRepo.PerMahasiswa(ctx, nim)
+	ipk := HitungIPK(daftar)
+	totalSKS := 0
+	for _, n := range daftar {
+		totalSKS += n.SKS
+	}
+
+	return RingkasanDTO{
+		NIM:      m.NIM,
+		Nama:     m.Nama,
+		Jurusan:  m.Jurusan,
+		Status:   m.Status,
+		TotalSKS: totalSKS,
+		IPK:      ipk,
+	}, nil
 }

@@ -40,6 +40,15 @@ type InputMahasiswaDTO struct {
     Status  string `json:"status" binding:"required"`
 }
 
+type RingkasanDTO struct {
+	NIM      string  `json:"nim"`
+	Nama     string  `json:"nama"`
+	Jurusan  string  `json:"jurusan"`
+	Status   string  `json:"status"`
+	TotalSKS int     `json:"total_sks"`
+	IPK      float64 `json:"ipk"`
+}
+
 type InputNilaiDTO struct {
     KodeMK string  `json:"kode_mk" binding:"required"`
     NamaMK string  `json:"nama_mk" binding:"required"`
