@@ -3,9 +3,7 @@ package siakad
 import (
     "context"
     "database/sql"
-    "fmt"
     "regexp"
-    "sort"
 )
 
 type Service interface {
@@ -16,8 +14,6 @@ type Service interface {
     HapusMahasiswa(ctx context.Context, nim string) error
     InputNilai(ctx context.Context, nim string, input InputNilaiDTO) error
 	Transkrip(ctx context.Context, nim string) (TranskripDTO, error)
-	PerJurusan(ctx context.Context) (map[string][]Mahasiswa, error)
-	TopIPK(ctx context.Context, n int) ([]MahasiswaDetailDTO, error)
 	Ringkasan(ctx context.Context, nim string) (RingkasanDTO, error)
 }
 
@@ -194,57 +190,6 @@ func (s *siakadService) Transkrip(ctx context.Context, nim string) (TranskripDTO
         IPK:            ipk,
         StatusCumlaude: cumlaude,
     }, nil
-}
-
-func (s *siakadService) PerJurusan(ctx context.Context) (map[string][]Mahasiswa, error) {
-    semua, err := s.mhsRepo.Semua(ctx)
-    if err != nil {
-        return nil, err
-    }
-
-    result := make(map[string][]Mahasiswa)
-    for _, m := range semua {
-        result[m.Jurusan] = append(result[m.Jurusan], m)
-    }
-    return result, nil
-}
-
-func (s *siakadService) TopIPK(ctx context.Context, n int) ([]MahasiswaDetailDTO, error) {
-    if n <= 0 {
-        n = 3
-    }
-
-    semua, err := s.mhsRepo.Semua(ctx)
-    if err != nil {
-        return nil, fmt.Errorf("gagal mengambil daftar mahasiswa: %w", err)
-    }
-
-    var result []MahasiswaDetailDTO
-    for _, m := range semua {
-        nilai, _ := s.nRepo.PerMahasiswa(ctx, m.NIM)
-        ipk := HitungIPK(nilai)
-        cumlaude := ""
-        if ipk >= 3.50 {
-            cumlaude = "Cumlaude"
-        }
-        result = append(result, MahasiswaDetailDTO{
-            NIM:            m.NIM,
-            Nama:           m.Nama,
-            Jurusan:        m.Jurusan,
-            Status:         m.Status,
-            IPK:            ipk,
-            StatusCumlaude: cumlaude,
-        })
-    }
-
-    sort.Slice(result, func(i, j int) bool {
-        return result[i].IPK > result[j].IPK
-    })
-
-	if n > len(result) {
-		n = len(result)
-	}
-	return result[:n], nil
 }
 
 func (s *siakadService) Ringkasan(ctx context.Context, nim string) (RingkasanDTO, error) {

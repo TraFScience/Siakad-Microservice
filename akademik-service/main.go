@@ -57,6 +57,12 @@ func main() {
     })
 
     api := router.Group("/api/v1")
+    api.GET("/rekap", func(c *gin.Context) {
+        c.JSON(http.StatusNotFound, gin.H{"sukses": false, "error": "route telah dipindahkan ke rekap-service"})
+    })
+    api.GET("/rekap/*any", func(c *gin.Context) {
+        c.JSON(http.StatusNotFound, gin.H{"sukses": false, "error": "route telah dipindahkan ke rekap-service"})
+    })
     handler.Register(api)
 
     addr := fmt.Sprintf(":%s", cfg.AppPort)

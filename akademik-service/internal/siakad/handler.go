@@ -27,8 +27,6 @@ func (h *Handler) Register(r *gin.RouterGroup) {
     r.POST("/mahasiswa/:nim/nilai", h.InputNilai)
 	r.GET("/mahasiswa/:nim/transkrip", h.Transkrip)
 	r.GET("/mahasiswa/:nim/ringkasan", h.Ringkasan)
-	r.GET("/rekap/jurusan", h.PerJurusan)
-    r.GET("/rekap/top-ipk", h.TopIPK)
 }
 
 func handleError(c *gin.Context, err error) {
@@ -117,25 +115,6 @@ func (h *Handler) Transkrip(c *gin.Context) {
             response.Error(c, http.StatusNotFound, err)
             return
         }
-        response.Error(c, http.StatusInternalServerError, err)
-        return
-    }
-    response.Success(c, http.StatusOK, data)
-}
-
-func (h *Handler) PerJurusan(c *gin.Context) {
-    data, err := h.svc.PerJurusan(c.Request.Context())
-    if err != nil {
-        response.Error(c, http.StatusInternalServerError, err)
-        return
-    }
-    response.Success(c, http.StatusOK, data)
-}
-
-func (h *Handler) TopIPK(c *gin.Context) {
-    n, _ := strconv.Atoi(c.DefaultQuery("n", "3"))
-    data, err := h.svc.TopIPK(c.Request.Context(), n)
-    if err != nil {
         response.Error(c, http.StatusInternalServerError, err)
         return
     }
