@@ -1,0 +1,63 @@
+services:
+  akademik-db:
+    image: postgres:18-alpine
+    container_name: akademik-db
+    environment:
+      POSTGRES_USER: siakad_user
+      POSTGRES_PASSWORD: siakad_password
+      POSTGRES_DB: siakad_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./akademik-service/migrations:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U siakad_user -d siakad_db"]
+      interval: 3s
+      timeout: 3s
+      retries: 5
+
+  akademik-service:
+    build:
+      context: ./akademik-service
+      dockerfile: Dockerfile
+    container_name: akademik-service
+    ports:
+      - "8081:8080"
+    environment:
+      PORT: "8080"
+      DB_HOST: akademik-db
+      DB_PORT: "5432"
+      DB_USER: siakad_user
+      DB_PASSWORD: siakad_password
+      DB_NAME: siakad_db
+    depends_on:
+      akademik-db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:8080/health"]
+      interval: 5s
+      timeout: 3s
+      retries: 3
+
+  rekap-service:
+    build:
+      context: ./rekap-service
+      dockerfile: Dockerfile
+    container_name: rekap-service
+    ports:
+      - "8082:8080"
+    environment:
+      PORT: "8080"
+      AKADEMIK_BASE_URL: "http://akademik-service:8080"
+    depends_on:
+      akademik-service:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:8080/health"]
+      interval: 5s
+      timeout: 3s
+      retries: 3
+
+volumes:
+  postgres_data:
