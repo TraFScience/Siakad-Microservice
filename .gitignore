@@ -1,0 +1,24 @@
+# Environment (kredensial asli)
+.env
+# Binary
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker volume
+dbdata/
+
+# Dependencies (go mod)
+vendor/
