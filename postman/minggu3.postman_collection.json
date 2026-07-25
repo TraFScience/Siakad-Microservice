@@ -1,0 +1,523 @@
+{
+	"info": {
+		"name": "SIAKAD Microservices - Minggu 3",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"description": "Collection pengujian API untuk 14 Acceptance Criteria SIAKAD Minggu 3"
+	},
+	"item": [
+		{
+			"name": "01 - Health Checks",
+			"item": [
+				{
+					"name": "Health Check Akademik Service (8081)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status 200 OK', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test('Body status ok', function () {",
+									"    var json = pm.response.json();",
+									"    pm.expect(json.status).to.eql('ok');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "http://localhost:8081/health",
+							"host": ["http://localhost:8081/health"],
+							"path": "health"
+						}
+					}
+				},
+				{
+					"name": "Health Check Rekap Service (8082)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status 200 OK', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test('Body status ok', function () {",
+									"    var json = pm.response.json();",
+									"    pm.expect(json.status).to.eql('ok');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "http://localhost:8082/health",
+							"host": ["http://localhost:8082/health"],
+							"path": "health"
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "02 - Register Mahasiswa",
+			"item": [
+				{
+					"name": "POST Mahasiswa Bunga (23010001) - 201 Created",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status 201 Created', function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"pm.test('Body sukses true', function () {",
+									"    var json = pm.response.json();",
+									"    pm.expect(json.sukses).to.be.true;",
+									"    pm.expect(json.data.nim).to.eql('23010001');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"url": "http://localhost:8081/api/v1/mahasiswa",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"nim\": \"23010001\",\n  \"nama\": \"Bunga\",\n  \"jurusan\": \"Teknik Informatika\",\n  \"status\": \"Aktif\"\n}"
+						}
+					}
+				},
+				{
+					"name": "POST Mahasiswa Bunga (23010001) Duplikat - 409 Conflict",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status 409 Conflict', function () {",
+									"    pm.response.to.have.status(409);",
+									"});",
+									"pm.test('Error message tentang NIM terdaftar', function () {",
+									"    var json = pm.response.json();",
+									"    pm.expect(json.error).to.include('terdaftar');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"url": "http://localhost:8081/api/v1/mahasiswa",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"nim\": \"23010001\",\n  \"nama\": \"Bunga\",\n  \"jurusan\": \"Teknik Informatika\",\n  \"status\": \"Aktif\"\n}"
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "03 - Input Nilai",
+			"item": [
+				{
+					"name": "POST Nilai Go (3 SKS, 4.0) untuk 23010001 - 201",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status 201 Created', function () {",
+									"    pm.response.to.have.status(201);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"url": "http://localhost:8081/api/v1/mahasiswa/23010001/nilai",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"kode_mk\": \"MK001\",\n  \"nama_mk\": \"Pemrograman Go\",\n  \"sks\": 3,\n  \"mutu\": 4.0\n}"
+						}
+					}
+				},
+				{
+					"name": "POST Nilai DB (2 SKS, 3.0) untuk 23010001 - 201",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status 201 Created', function () {",
+									"    pm.response.to.have.status(201);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"url": "http://localhost:8081/api/v1/mahasiswa/23010001/nilai",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"kode_mk\": \"MK002\",\n  \"nama_mk\": \"Basis Data\",\n  \"sks\": 2,\n  \"mutu\": 3.0\n}"
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "04 - Register Mahasiswa Lain + Nilai",
+			"item": [
+				{
+					"name": "POST Mahasiswa Candra (23010002) - SI",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status 201 Created', function () {",
+									"    pm.response.to.have.status(201);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"url": "http://localhost:8081/api/v1/mahasiswa",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"nim\": \"23010002\",\n  \"nama\": \"Candra\",\n  \"jurusan\": \"Sistem Informasi\",\n  \"status\": \"Aktif\"\n}"
+						}
+					}
+				},
+				{
+					"name": "POST Nilai untuk 23010002 (4 SKS, 4.0)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status 201 Created', function () {",
+									"    pm.response.to.have.status(201);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"url": "http://localhost:8081/api/v1/mahasiswa/23010002/nilai",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"kode_mk\": \"MK003\",\n  \"nama_mk\": \"Analisis Sistem\",\n  \"sks\": 4,\n  \"mutu\": 4.0\n}"
+						}
+					}
+				},
+				{
+					"name": "POST Mahasiswa Dita (23010003) - TI",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status 201 Created', function () {",
+									"    pm.response.to.have.status(201);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"url": "http://localhost:8081/api/v1/mahasiswa",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"nim\": \"23010003\",\n  \"nama\": \"Dita\",\n  \"jurusan\": \"Teknik Informatika\",\n  \"status\": \"Aktif\"\n}"
+						}
+					}
+				},
+				{
+					"name": "POST Nilai untuk 23010003 (3 SKS, 3.5)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status 201 Created', function () {",
+									"    pm.response.to.have.status(201);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"url": "http://localhost:8081/api/v1/mahasiswa/23010003/nilai",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"kode_mk\": \"MK001\",\n  \"nama_mk\": \"Pemrograman Go\",\n  \"sks\": 3,\n  \"mutu\": 3.5\n}"
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "05 - Rekap Service",
+			"item": [
+				{
+					"name": "GET Rekap Per Jurusan - 200 OK",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status 200 OK', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test('Data terkelompok per jurusan', function () {",
+									"    var json = pm.response.json();",
+									"    pm.expect(json.sukses).to.be.true;",
+									"    pm.expect(json.data).to.have.property('Teknik Informatika');",
+									"    pm.expect(json.data).to.have.property('Sistem Informasi');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"url": "http://localhost:8082/api/v1/rekap/jurusan"
+					}
+				},
+				{
+					"name": "GET Top IPK (n=2) - 200 OK",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status 200 OK', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test('Mengembalikan 2 mahasiswa IPK tertinggi', function () {",
+									"    var json = pm.response.json();",
+									"    pm.expect(json.data).to.be.an('array').with.lengthOf(2);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "http://localhost:8082/api/v1/rekap/top-ipk?n=2",
+							"query": [{ "key": "n", "value": "2" }],
+							"host": "http://localhost:8082/api/v1/rekap/top-ipk"
+						}
+					}
+				},
+				{
+					"name": "GET Ringkasan Mahasiswa Tidak Ada - 404",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status 404 Not Found', function () {",
+									"    pm.response.to.have.status(404);",
+									"});",
+									"pm.test('Error mahasiswa tidak ditemukan', function () {",
+									"    var json = pm.response.json();",
+									"    pm.expect(json.error).to.include('tidak ditemukan');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"url": "http://localhost:8082/api/v1/rekap/mahasiswa/99999999"
+					}
+				},
+				{
+					"name": "GET Ringkasan Mahasiswa Valid - 200 OK",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status 200 OK', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test('Ringkasan lengkap', function () {",
+									"    var json = pm.response.json();",
+									"    pm.expect(json.sukses).to.be.true;",
+									"    pm.expect(json.data.nim).to.eql('23010001');",
+									"    pm.expect(json.data).to.have.property('total_sks');",
+									"    pm.expect(json.data).to.have.property('ipk');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"url": "http://localhost:8082/api/v1/rekap/mahasiswa/23010001"
+					}
+				},
+				{
+					"name": "GET Top IPK Invalid n - 400 Bad Request",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status 400 Bad Request', function () {",
+									"    pm.response.to.have.status(400);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "http://localhost:8082/api/v1/rekap/top-ipk?n=abc",
+							"query": [{ "key": "n", "value": "abc" }],
+							"host": "http://localhost:8082/api/v1/rekap/top-ipk"
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "06 - Resiliensi 503 (Akademik Mati)",
+			"item": [
+				{
+					"name": "GET Rekap Jurusan saat Akademik Mati - 503",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status 503 Service Unavailable', function () {",
+									"    pm.response.to.have.status(503);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"url": "http://localhost:8082/api/v1/rekap/jurusan",
+						"description": "Jalankan setelah 'docker compose stop akademik-service'"
+					}
+				}
+			]
+		},
+		{
+			"name": "07 - Akademik Service Internal",
+			"item": [
+				{
+					"name": "GET Ringkasan Internal - 200 OK",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status 200 OK', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"pm.test('Ringkasan sesuai kontrak internal', function () {",
+									"    var json = pm.response.json();",
+									"    pm.expect(json.sukses).to.be.true;",
+									"    pm.expect(json.data.nim).to.eql('23010001');",
+									"    pm.expect(json.data).to.have.property('total_sks');",
+									"    pm.expect(json.data).to.have.property('ipk');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"url": "http://localhost:8081/api/v1/mahasiswa/23010001/ringkasan"
+					}
+				},
+				{
+					"name": "GET Route Rekap Lama pada Akademik - 404",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status 404 Not Found', function () {",
+									"    pm.response.to.have.status(404);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"url": "http://localhost:8081/api/v1/rekap/jurusan",
+						"description": "Route rekap harus sudah dipindah ke rekap-service"
+					}
+				}
+			]
+		}
+	]
+}
